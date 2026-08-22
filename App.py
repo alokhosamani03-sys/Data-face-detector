@@ -6,222 +6,188 @@ import os
 
 # Page Configuration
 st.set_page_config(
-    page_title="CyberVision Lab | Alok & Akash",
-    page_icon="⚡",
+    page_title="Vision System | Alok & Akash",
+    page_icon="🤖",
     layout="centered"
 )
 
-# Custom Cyberpunk & Animated Sci-Fi HUD Theme
+# Core Cyberpunk Engine & Falling/Floating Animations
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;600;700&display=swap');
 
-    /* Global Body & Animated Cyber Grid Background */
+    /* Global styling and background image */
     .stApp {
-        background: 
-            radial-gradient(circle at 50% 10%, rgba(0, 240, 255, 0.12), transparent 45%),
-            radial-gradient(circle at 85% 90%, rgba(121, 40, 202, 0.18), transparent 50%),
-            linear-gradient(180deg, #030712 0%, #080d1a 50%, #030712 100%),
-            linear-gradient(rgba(0, 240, 255, 0.04) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0, 240, 255, 0.04) 1px, transparent 1px);
-        background-size: 100% 100%, 100% 100%, 100% 100%, 36px 36px, 36px 36px;
-        background-position: center, center, center, center center, center center;
-        color: #E2E8F0;
+        background: linear-gradient(rgba(4, 9, 20, 0.9), rgba(4, 9, 20, 0.95)),
+                    url('https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        color: #e0f2fe;
         font-family: 'Rajdhani', sans-serif;
     }
 
-    /* Keyframe Animations */
-    @keyframes neonFlow {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
+    /* Fixed container for flying/falling cyber elements */
+    .cyber-particles {
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        z-index: -1;
+        overflow: hidden;
+        pointer-events: none; /* Allows clicking through the animations */
     }
 
-    @keyframes radarPulse {
-        0% { box-shadow: 0 0 0 0 rgba(0, 240, 255, 0.7); }
-        70% { box-shadow: 0 0 0 14px rgba(0, 240, 255, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(0, 240, 255, 0); }
+    /* Base styling for falling elements */
+    .particle {
+        position: absolute;
+        font-family: 'Share Tech Mono', monospace;
+        color: rgba(0, 240, 255, 0.25);
+        user-select: none;
+        animation: fall linear infinite;
+        text-shadow: 0 0 5px rgba(0, 240, 255, 0.3);
     }
 
-    @keyframes laserSweep {
-        0% { top: 0%; opacity: 0.8; }
-        50% { opacity: 1; }
-        100% { top: 96%; opacity: 0.8; }
+    /* Individual element physics (Speed, size, rotation) */
+    .p1 { left: 5%; font-size: 1.2rem; animation-duration: 12s; animation-delay: 0s; }
+    .p2 { left: 20%; font-size: 0.9rem; animation-duration: 8s; animation-delay: 3s; color: rgba(112, 0, 255, 0.3); }
+    .p3 { left: 35%; font-size: 1.5rem; animation-duration: 15s; animation-delay: 1s; }
+    .p4 { left: 50%; font-size: 1rem; animation-duration: 10s; animation-delay: 5s; }
+    .p5 { left: 65%; font-size: 2rem; animation-duration: 18s; animation-delay: 2s; color: rgba(255, 0, 122, 0.2); }
+    .p6 { left: 80%; font-size: 1.1rem; animation-duration: 9s; animation-delay: 4s; }
+    .p7 { left: 90%; font-size: 1.3rem; animation-duration: 14s; animation-delay: 0.5s; }
+
+    /* The Falling Keyframe */
+    @keyframes fall {
+        0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
     }
 
-    @keyframes holoFloat {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-4px); }
+    /* Floating Keyframe for HUD */
+    @keyframes floatHolo {
+        0%, 100% { transform: translateY(0px); box-shadow: 0 5px 15px rgba(0, 240, 255, 0.1); }
+        50% { transform: translateY(-6px); box-shadow: 0 15px 25px rgba(0, 240, 255, 0.25); }
     }
 
-    /* Animated Dynamic Title */
+    /* Title Styling */
     .cyber-title {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 1.85rem !important;
-        font-weight: 800;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 1.8rem !important;
+        font-weight: 700;
         text-align: center;
+        color: #fff;
         text-transform: uppercase;
-        letter-spacing: 1px;
-        background: linear-gradient(90deg, #00F0FF, #7000FF, #FF007A, #00F0FF);
-        background-size: 300% auto;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        animation: neonFlow 5s linear infinite;
-        margin-bottom: 4px;
-        padding-top: 8px;
+        text-shadow: 0 0 10px #00F0FF, 0 0 20px #00F0FF, 0 0 40px #00F0FF;
+        margin-bottom: 5px;
+        letter-spacing: -0.5px;
     }
-
+    
     .cyber-subtitle {
-        font-family: 'JetBrains Mono', monospace;
         text-align: center;
-        color: #00F0FF;
-        font-size: 0.78rem;
-        letter-spacing: 3px;
-        text-transform: uppercase;
-        opacity: 0.85;
-        margin-bottom: 24px;
+        font-family: 'Share Tech Mono', monospace;
+        color: #7000FF;
+        font-size: 0.9rem;
+        margin-bottom: 30px;
+        text-shadow: 0 0 5px #7000FF;
     }
 
-    /* Live HUD Status Card */
-    .hud-panel {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: rgba(10, 18, 38, 0.75);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(0, 240, 255, 0.35);
-        border-radius: 12px;
-        padding: 14px 22px;
-        margin-bottom: 20px;
-        animation: holoFloat 4s ease-in-out infinite;
-        box-shadow: 0 8px 32px rgba(0, 240, 255, 0.1);
-    }
-
-    .status-beacon {
-        display: inline-block;
-        width: 10px;
-        height: 10px;
-        background-color: #00F0FF;
-        border-radius: 50%;
-        margin-right: 8px;
-        animation: radarPulse 2s infinite;
-    }
-
-    /* Glowing Animated Cards for Upload & Camera */
+    /* Interactive Upload/Camera Cards */
     div[data-testid="stFileUploader"], div[data-testid="stCameraInput"] {
-        background: rgba(10, 18, 38, 0.6) !important;
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
-        border: 1px solid rgba(0, 240, 255, 0.25) !important;
-        border-radius: 16px !important;
-        padding: 16px !important;
-        transition: all 0.35s ease;
-        position: relative;
+        background: rgba(4, 9, 20, 0.7) !important;
+        border: 1px solid rgba(0, 240, 255, 0.3) !important;
+        border-radius: 4px !important;
+        box-shadow: inset 0 0 20px rgba(0,240,255,0.05);
+        padding: 20px !important;
+        transition: 0.3s all;
     }
-
     div[data-testid="stFileUploader"]:hover, div[data-testid="stCameraInput"]:hover {
         border-color: #00F0FF !important;
-        box-shadow: 0 0 30px rgba(0, 240, 255, 0.28);
-        transform: scale(1.01);
+        box-shadow: inset 0 0 30px rgba(0,240,255,0.15), 0 0 15px rgba(0,240,255,0.3);
     }
 
-    /* Sci-Fi Tabs */
+    /* Tech-style Tabs */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 12px;
-        justify-content: center;
-        border-bottom: 1px solid rgba(0, 240, 255, 0.15);
-        padding-bottom: 8px;
+        border-bottom: 1px solid #334155;
     }
-
     .stTabs [data-baseweb="tab"] {
-        font-family: 'Orbitron', sans-serif;
-        background: rgba(255, 255, 255, 0.02);
-        border: 1px solid rgba(0, 240, 255, 0.2);
-        border-radius: 8px;
-        color: #94A3B8;
-        padding: 8px 20px;
-        font-size: 0.85rem;
-        transition: all 0.3s ease;
+        font-family: 'Share Tech Mono', monospace;
+        background: transparent;
+        color: #64748b;
     }
-
     .stTabs [aria-selected="true"] {
-        background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(112, 0, 255, 0.3)) !important;
-        border-color: #00F0FF !important;
+        background: rgba(0, 240, 255, 0.1) !important;
+        border: 1px solid #00F0FF !important;
+        border-bottom: none !important;
         color: #00F0FF !important;
-        box-shadow: 0 0 18px rgba(0, 240, 255, 0.4);
     }
 
-    /* Result Target Counter */
-    .target-box {
-        background: linear-gradient(90deg, rgba(0, 240, 255, 0.12), rgba(112, 0, 255, 0.2));
-        border: 1px solid #00F0FF;
-        border-radius: 10px;
-        padding: 12px 18px;
-        margin: 18px 0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-family: 'JetBrains Mono', monospace;
-        box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
-    }
-
-    /* Scanning Overlay Laser Bar */
-    .scanner-container {
+    /* Scanner Animation */
+    .scanner-box {
         position: relative;
         overflow: hidden;
-        border-radius: 12px;
-        border: 1px solid rgba(0, 240, 255, 0.4);
+        border: 2px solid #00F0FF;
+        padding: 2px;
+        animation: floatHolo 4s ease-in-out infinite;
     }
-
-    .scanner-laser {
+    .laser-line {
         position: absolute;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: linear-gradient(90deg, transparent, #00F0FF, #FFFFFF, #00F0FF, transparent);
-        box-shadow: 0 0 15px #00F0FF, 0 0 25px #00F0FF;
-        animation: laserSweep 2.5s ease-in-out infinite alternate;
-        z-index: 10;
-        pointer-events: none;
+        top: 0; left: 0; right: 0; height: 2px;
+        background: #00F0FF;
+        box-shadow: 0 0 15px 5px rgba(0, 240, 255, 0.5);
+        animation: scan 2s linear infinite alternate;
+        z-index: 50;
+    }
+    @keyframes scan {
+        0% { top: 0%; opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { top: 98%; opacity: 0; }
     }
 
-    /* Tiny Stealth Signature */
+    /* HUD Output Stats */
+    .stats-hud {
+        display: flex;
+        justify-content: space-between;
+        background: rgba(0, 0, 0, 0.6);
+        border-left: 4px solid #FF007A;
+        padding: 10px 15px;
+        margin: 15px 0;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 1.1rem;
+    }
+
+    /* Stealth Signature */
     .stealth-sig {
         text-align: right;
-        font-size: 0.55rem;
-        font-family: 'JetBrains Mono', monospace;
-        color: rgba(0, 240, 255, 0.3);
-        letter-spacing: 2px;
-        margin-top: 45px;
-        padding-right: 5px;
-        user-select: none;
+        font-size: 0.5rem;
+        font-family: 'Share Tech Mono', monospace;
+        color: rgba(255, 255, 255, 0.15);
+        margin-top: 50px;
+        padding-right: 2px;
     }
-
-    /* Hide Default Chrome */
+    
     #MainMenu, footer, header {visibility: hidden;}
 </style>
-""", unsafe_allow_html=True)
 
-# Cyber Header
-st.markdown('<div class="cyber-title">Ai face detection web model by Alok and Akash</div>', unsafe_allow_html=True)
-st.markdown('<div class="cyber-subtitle">// NEURAL ENGINE ONLINE • YOLOV8 ARCHITECTURE //</div>', unsafe_allow_html=True)
-
-# Status HUD Panel
-st.markdown("""
-<div class="hud-panel">
-    <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; display: flex; align-items: center;">
-        <span class="status-beacon"></span>CORE STATUS: READY
-    </div>
-    <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #00F0FF;">
-        LATENCY: &lt;15ms
-    </div>
+<!-- Injecting the falling tech elements -->
+<div class="cyber-particles">
+    <div class="particle p1">01101001</div>
+    <div class="particle p2">&lt;SYS_OVERRIDE/&gt;</div>
+    <div class="particle p3">♦</div>
+    <div class="particle p4">YOLOv8_VISION</div>
+    <div class="particle p5">[0xFF]</div>
+    <div class="particle p6">ERROR_404</div>
+    <div class="particle p7">101101</div>
 </div>
 """, unsafe_allow_html=True)
 
-# Model Loader
+# Application Header
+st.markdown('<div class="cyber-title">Ai face detection web model by Alok and Akash</div>', unsafe_allow_html=True)
+st.markdown('<div class="cyber-subtitle">[ NEURAL NETWORK PROCESSING NODE ]</div>', unsafe_allow_html=True)
+
+# Load Model Safety Check
 if not os.path.exists("best.pt"):
-    st.error("Model weights file 'best.pt' was not found in repository root.")
+    st.error("[SYSTEM HALT] 'best.pt' weights missing from memory banks.")
     st.stop()
 
 @st.cache_resource
@@ -230,52 +196,52 @@ def load_yolo():
 
 try:
     model = load_yolo()
-except Exception as err:
-    st.error(f"Inference engine failure: {err}")
+except Exception as e:
+    st.error(f"[KERNEL PANIC] {e}")
     st.stop()
 
 # Controls
-confidence = st.slider("TARGET CONFIDENCE SENSITIVITY", min_value=0.1, max_value=1.0, value=0.35, step=0.05)
+st.markdown("<span style='font-family: \"Share Tech Mono\"; color: #00F0FF;'>[CONFIDENCE_THRESHOLD]</span>", unsafe_allow_html=True)
+confidence = st.slider("", min_value=0.1, max_value=1.0, value=0.35, step=0.05, label_visibility="collapsed")
 
-# Input Tabs
-tab_gallery, tab_live = st.tabs(["[ ⚡ GALLERY FEED ]", "[ 📷 LIVE SENSOR ]"])
+# Cyber Tabs
+tab_file, tab_cam = st.tabs(["<UPLOAD_DRIVE>", "<INITIATE_CAMERA>"])
 
 input_image = None
 
-with tab_gallery:
-    uploaded = st.file_uploader("Upload Frame", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
+with tab_file:
+    uploaded = st.file_uploader("Mount Image File", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
     if uploaded:
         input_image = Image.open(uploaded).convert("RGB")
 
-with tab_live:
-    captured = st.camera_input("Capture Frame", label_visibility="collapsed")
+with tab_cam:
+    captured = st.camera_input("Access Optic Sensor", label_visibility="collapsed")
     if captured:
         input_image = Image.open(captured).convert("RGB")
 
-# Detection Pipeline
+# YOLO Inference
 if input_image is not None:
-    with st.spinner("RUNNING NEURAL PASS..."):
+    with st.spinner("EXECUTING NEURAL SCAN..."):
         results = model.predict(source=input_image, conf=confidence, verbose=False)
         annotated_array = results[0].plot()
         output_image = Image.fromarray(annotated_array[..., ::-1])
+        detected = len(results[0].boxes)
         
-        detected_count = len(results[0].boxes)
-        
-        # Result HUD
+        # Stats HUD Output
         st.markdown(
             f"""
-            <div class="target-box">
-                <div>DETECTION STATUS: <span style="color:#00F0FF; font-weight:700;">PROCESSED</span></div>
-                <div>FACES IDENTIFIED: <span style="color:#00F0FF; font-weight:700; font-size:1.1rem;">[{detected_count}]</span></div>
+            <div class="stats-hud">
+                <span style="color: #FF007A;">> TARGETS_LOCKED:</span>
+                <span style="color: #00F0FF; font-weight: bold;">[{detected}]</span>
             </div>
-            """,
+            """, 
             unsafe_allow_html=True
         )
         
-        # Laser-scanned Output Image
-        st.markdown('<div class="scanner-container"><div class="scanner-laser"></div>', unsafe_allow_html=True)
+        # Display Image with Laser Scanner wrap
+        st.markdown('<div class="scanner-box"><div class="laser-line"></div>', unsafe_allow_html=True)
         st.image(output_image, use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
-# Micro Signature
+# Small Loki Signature
 st.markdown('<div class="stealth-sig">loki</div>', unsafe_allow_html=True)
