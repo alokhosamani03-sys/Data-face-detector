@@ -3,6 +3,7 @@ from PIL import Image
 import numpy as np
 from ultralytics import YOLO
 import os
+import base64
 
 # Page Configuration
 st.set_page_config(
@@ -11,20 +12,30 @@ st.set_page_config(
     layout="centered"
 )
 
-# 1. CSS STYLES WITH ANIMATED TITLE AND BIOMETRIC HUD BACKGROUND
-st.markdown("""
+# --- BACKGROUND IMAGE LOADER ---
+bg_img_css = "url('https://images.unsplash.com/photo-1531746790731-6c087fecd65a?q=80&w=2070&auto=format&fit=crop')"
+
+if os.path.exists("bg.jpg"):
+    with open("bg.jpg", "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read()).decode()
+    bg_img_css = f"url('data:image/jpeg;base64,{encoded_string}')"
+elif os.path.exists("bg.png"):
+    with open("bg.png", "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read()).decode()
+    bg_img_css = f"url('data:image/png;base64,{encoded_string}')"
+
+# 1. CSS STYLES WITH ANIMATED TITLE AND YOUR CUSTOM BACKGROUND
+css = """
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;600;700&display=swap');
 
-    /* BIOMETRIC HUD BACKGROUND: Grid lines + Dark Gradient + Face Image */
+    /* BIOMETRIC HUD BACKGROUND */
     .stApp {
         background: 
-            linear-gradient(rgba(0, 255, 255, 0.07) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0, 255, 255, 0.07) 1px, transparent 1px),
-            linear-gradient(rgba(4, 9, 20, 0.5), rgba(4, 9, 20, 0.95)),
-            url('https://images.unsplash.com/photo-1531746790731-6c087fecd65a?q=80&w=2070&auto=format&fit=crop');
-        background-size: 40px 40px, 40px 40px, cover, cover;
-        background-position: center, center, center, center top;
+            linear-gradient(rgba(4, 9, 20, 0.3), rgba(4, 9, 20, 0.8)), 
+            BACKGROUND_IMAGE_PLACEHOLDER;
+        background-size: cover;
+        background-position: center top;
         background-attachment: fixed;
         color: #e0f2fe; 
         font-family: 'Rajdhani', sans-serif;
@@ -42,19 +53,16 @@ st.markdown("""
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         animation: gradient-shift 4s linear infinite;
-        margin-bottom: 5px; 
+        margin-bottom: 25px; 
         letter-spacing: 1px;
         filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.3));
     }
 
-    /* Title Color Animation Keyframe */
     @keyframes gradient-shift { 
         0% { background-position: 0% 50%; } 
         50% { background-position: 100% 50%; } 
         100% { background-position: 0% 50%; } 
     }
-
-    .cyber-subtitle { text-align: center; font-family: 'Share Tech Mono', monospace; color: #00F0FF; font-size: 0.9rem; margin-bottom: 30px; text-shadow: 0 0 5px #00F0FF; }
 
     /* Particles & HUD Roaming Boxes */
     .cyber-particles { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 999; pointer-events: none; overflow: hidden; }
@@ -91,13 +99,17 @@ st.markdown("""
     @keyframes scan { 0% { top: 0%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 98%; opacity: 0; } }
 
     .stats-hud { display: flex; justify-content: space-between; background: rgba(0, 0, 0, 0.7); border-left: 4px solid #FF007A; padding: 10px 15px; margin: 15px 0; font-family: 'Share Tech Mono', monospace; font-size: 1.1rem; }
-    .stealth-sig { text-align: right; font-size: 0.6rem; font-family: 'Share Tech Mono', monospace; color: rgba(255, 255, 255, 0.2); margin-top: 50px; padding-right: 5px; user-select: none; }
+    .stealth-sig { text-align: right; font-size: 0.6rem; font-family: 'Share Tech Mono', monospace; color: rgba(255, 255, 255, 0.4); margin-top: 50px; padding-right: 5px; user-select: none; }
     
     #MainMenu, footer, header {visibility: hidden;}
 </style>
-""", unsafe_allow_html=True)
+"""
 
-# 2. HTML ANIMATIONS (Ensure no spaces on the left side)
+# Replace the placeholder with the actual image (either bg.jpg or the fallback)
+css = css.replace("BACKGROUND_IMAGE_PLACEHOLDER", bg_img_css)
+st.markdown(css, unsafe_allow_html=True)
+
+# 2. HTML ANIMATIONS
 st.markdown("""
 <div class="cyber-particles">
 <div class="roam-box">FACIAL_MAP_01</div>
@@ -112,7 +124,6 @@ st.markdown("""
 
 # 3. APP LOGIC
 st.markdown('<div class="cyber-title">AI Face Detection Web Model by Alok and Akash</div>', unsafe_allow_html=True)
-st.markdown('<div class="cyber-subtitle">[ BIOMETRIC PROCESSING NODE ONLINE ]</div>', unsafe_allow_html=True)
 
 if not os.path.exists("best.pt"):
     st.error("[SYSTEM HALT] 'best.pt' weights missing from memory banks.")
