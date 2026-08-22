@@ -166,7 +166,7 @@ if input_image is not None:
         st.markdown(
             f"""
             <div class="stats-hud">
-                <span style="color: #FF007A;">> TARGETS_LOCKED:</span>
+                <span style="color: #FF007A;">> FACES_DETECTED:</span>
                 <span style="color: #00FFFF; font-weight: bold;">[{detected}]</span>
             </div>
             """, 
