@@ -16,12 +16,12 @@ st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;600;700&display=swap');
 
-    /* Global styling and background image */
+    /* Global styling with NEW AI Face Detection Background */
     .stApp {
-        background: linear-gradient(rgba(4, 9, 20, 0.85), rgba(4, 9, 20, 0.95)),
-                    url('https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop');
+        background: linear-gradient(rgba(4, 9, 20, 0.70), rgba(4, 9, 20, 0.95)),
+                    url('https://images.unsplash.com/photo-1531746790731-6c087fecd65a?q=80&w=2070&auto=format&fit=crop');
         background-size: cover;
-        background-position: center;
+        background-position: center top;
         background-attachment: fixed;
         color: #e0f2fe;
         font-family: 'Rajdhani', sans-serif;
@@ -99,14 +99,14 @@ st.markdown("""
     @keyframes roam {
         0% { top: 10%; left: 5%; transform: scale(1); border-color: rgba(0,255,255,0.3); color: rgba(0,255,255,0.2); }
         30% { top: 60%; left: 30%; transform: scale(1.2); }
-        50% { border-color: #00FFFF; color: #00FFFF; box-shadow: 0 0 30px rgba(0,255,255,0.4); text-shadow: 0 0 10px #00FFFF; } /* Simulated "Lock On" */
+        50% { border-color: #00FFFF; color: #00FFFF; box-shadow: 0 0 30px rgba(0,255,255,0.4); text-shadow: 0 0 10px #00FFFF; } 
         70% { top: 20%; left: 70%; transform: scale(0.8); border-color: rgba(0,255,255,0.3); color: rgba(0,255,255,0.2); }
         100% { top: 80%; left: 85%; transform: scale(1.1); }
     }
 
     @keyframes roam2 {
         0% { top: 80%; left: 10%; transform: scale(1.5) rotate(-10deg); }
-        40% { top: 30%; left: 60%; transform: scale(1) rotate(0deg); border-color: #FF007A; color: #FF007A; box-shadow: 0 0 30px rgba(255,0,122,0.4); } /* Lock On */
+        40% { top: 30%; left: 60%; transform: scale(1) rotate(0deg); border-color: #FF007A; color: #FF007A; box-shadow: 0 0 30px rgba(255,0,122,0.4); } 
         100% { top: 15%; left: 80%; transform: scale(0.9) rotate(10deg); }
     }
 
